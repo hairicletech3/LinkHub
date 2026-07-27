@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom bits Tailwind utilities can't express cleanly */
+.marquee-track { animation: scroll 22s linear infinite; }
+@keyframes scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
+}
+
+.card:hover, .card:focus-visible {
+  transform: translateY(-2px);
+  border-color: #E06A3C;
+}
+.card.wide {
+  background: linear-gradient(135deg, #37312E, #2A2320);
+}
