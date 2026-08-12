@@ -2,6 +2,140 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ================= Ambient background glow ================= */
+body { position: relative; }
+
+/* Fixed aurora layer. Sits behind everything; the whole layer drifts a few
+   pixels with scroll (--glow-shift, set in JS) for a parallax feel. */
+.bg-glow {
+  position: fixed;
+  inset: -10%;               /* bleed so blurred edges never show a seam */
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  transform: translate3d(0, var(--glow-shift, 0px), 0);
+  /* base wash: warm from the top, cool from the bottom */
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgba(224,106,60,.13), transparent 62%),
+    radial-gradient(100% 70% at 50% 110%, rgba(61,91,199,.11), transparent 62%);
+}
+
+/* --- Orbs --- screen blending makes overlaps glow instead of muddying --- */
+.bg-glow span {
+  position: absolute;
+  display: block;
+  border-radius: 9999px;
+  filter: blur(80px);
+  mix-blend-mode: screen;
+  opacity: .7;
+  will-change: transform;
+}
+/* warm ember, top-right */
+.bg-glow span:nth-child(1) {
+  width: 62vw; height: 62vw;
+  max-width: 460px; max-height: 460px;
+  top: -6vh; right: -16vw;
+  background: radial-gradient(circle, rgba(224,106,60,.85), rgba(224,106,60,.15) 55%, transparent 72%);
+  animation: glow-drift-a 18s ease-in-out infinite;
+}
+/* cool blue, mid-left */
+.bg-glow span:nth-child(2) {
+  width: 58vw; height: 58vw;
+  max-width: 420px; max-height: 420px;
+  top: 30vh; left: -18vw;
+  background: radial-gradient(circle, rgba(61,91,199,.80), rgba(61,91,199,.14) 55%, transparent 72%);
+  animation: glow-drift-b 22s ease-in-out infinite;
+}
+/* deep amber, bottom-right */
+.bg-glow span:nth-child(3) {
+  width: 66vw; height: 66vw;
+  max-width: 480px; max-height: 480px;
+  bottom: -12vh; right: -10vw;
+  background: radial-gradient(circle, rgba(240,120,70,.62), rgba(240,120,70,.12) 55%, transparent 72%);
+  animation: glow-drift-c 26s ease-in-out infinite;
+}
+/* magenta accent, upper-left — the "cool" pop against the orange */
+.bg-glow span:nth-child(4) {
+  width: 48vw; height: 48vw;
+  max-width: 360px; max-height: 360px;
+  top: 4vh; left: -14vw;
+  background: radial-gradient(circle, rgba(168,85,247,.55), rgba(168,85,247,.10) 55%, transparent 72%);
+  animation: glow-drift-d 30s ease-in-out infinite;
+}
+/* teal, low-left */
+.bg-glow span:nth-child(5) {
+  width: 44vw; height: 44vw;
+  max-width: 330px; max-height: 330px;
+  bottom: 6vh; left: -12vw;
+  background: radial-gradient(circle, rgba(20,184,166,.45), rgba(20,184,166,.09) 55%, transparent 72%);
+  animation: glow-drift-b 34s ease-in-out infinite reverse;
+}
+
+/* Vignette: darkens the rim so the centre column stays readable */
+.bg-glow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(115% 85% at 50% 45%, transparent 35%, rgba(12,9,8,.55) 100%);
+}
+/* Fine grain, keeps the big blurs from looking like flat banded gradients */
+.bg-glow::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .16;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@keyframes glow-drift-a {
+  0%, 100% { transform: translate3d(0,0,0) scale(1); }
+  50%      { transform: translate3d(-7%, 9%, 0) scale(1.14); }
+}
+@keyframes glow-drift-b {
+  0%, 100% { transform: translate3d(0,0,0) scale(1); }
+  50%      { transform: translate3d(9%, -7%, 0) scale(1.10); }
+}
+@keyframes glow-drift-c {
+  0%, 100% { transform: translate3d(0,0,0) scale(1); }
+  50%      { transform: translate3d(-9%, -6%, 0) scale(1.16); }
+}
+@keyframes glow-drift-d {
+  0%, 100% { transform: translate3d(0,0,0) scale(1); }
+  50%      { transform: translate3d(11%, 10%, 0) scale(1.20); }
+}
+
+/* Phones: fewer, cheaper layers — big blurs are expensive to composite */
+@media (max-width: 520px) {
+  .bg-glow span { filter: blur(60px); opacity: .6; }
+  .bg-glow span:nth-child(5) { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-glow { transform: none; }
+  .bg-glow span { animation: none; }
+}
+
+/* ---- Halo behind the hero logo ---- */
+.logo-halo { position: relative; }
+.logo-halo::before {
+  content: "";
+  position: absolute;
+  inset: -55%;
+  z-index: -1;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(224,106,60,.55), rgba(224,106,60,.10) 45%, transparent 70%);
+  filter: blur(22px);
+  animation: halo-breathe 5s ease-in-out infinite;
+}
+@keyframes halo-breathe {
+  0%, 100% { opacity: .65; transform: scale(1); }
+  50%      { opacity: 1;   transform: scale(1.08); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .logo-halo::before { animation: none; }
+}
+
 /* Custom bits Tailwind utilities can't express cleanly */
 .marquee-track { animation: scroll 22s linear infinite; }
 @keyframes scroll {
@@ -12,10 +146,352 @@
   .marquee-track { animation: none; }
 }
 
-.card:hover, .card:focus-visible {
-  transform: translateY(-2px);
-  border-color: #E06A3C;
+/* ---- Base card (shared by touch + pointer) ---- */
+.card {
+  position: relative;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;  /* we draw our own press state */
+  /* glass, so the aurora behind the page reads through the cards */
+  background-color: rgba(42,35,32,.72);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  backdrop-filter: blur(12px) saturate(140%);
+  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease, background-color .25s ease;
 }
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 20%, rgba(224,106,60,.18) 50%, transparent 80%);
+  transform: translateX(-120%);
+  transition: transform .6s ease;
+  pointer-events: none;
+}
+/* Leading icon badge */
+.card > span:first-child {
+  border-radius: 12px;
+  background: rgba(224,106,60,.10);
+  border: 1px solid rgba(224,106,60,.22);
+  color: #E06A3C;
+  transition: background .25s ease, border-color .25s ease, transform .25s ease, box-shadow .25s ease;
+}
+/* Trailing arrow pill */
+.card > span:last-child {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.06);
+  color: #b8ada8;
+  flex-shrink: 0;
+  transition: background .25s ease, border-color .25s ease, color .25s ease, transform .25s ease, box-shadow .25s ease;
+}
+.card > span:last-child svg { transition: transform .25s ease; }
 .card.wide {
   background: linear-gradient(135deg, #37312E, #2A2320);
+}
+
+/* ---- Highlight state: shared by hover, keyboard focus and touch press ---- */
+.card:focus-visible,
+.card.is-pressed {
+  transform: translateY(-3px);
+  border-color: #E06A3C;
+  box-shadow: 0 10px 24px -12px rgba(224,106,60,.55), 0 0 0 1px rgba(224,106,60,.25);
+  background-color: rgba(55,49,46,.86);
+}
+.card:focus-visible::before,
+.card.is-pressed::before {
+  transform: translateX(120%);
+}
+.card:focus-visible > span:first-child,
+.card.is-pressed > span:first-child {
+  background: rgba(224,106,60,.22);
+  border-color: rgba(224,106,60,.55);
+  box-shadow: 0 0 0 4px rgba(224,106,60,.10);
+  transform: rotate(-6deg) scale(1.06);
+}
+.card:focus-visible > span:last-child,
+.card.is-pressed > span:last-child {
+  background: #E06A3C;
+  border-color: #E06A3C;
+  color: #fff;
+  box-shadow: 0 6px 14px -6px rgba(224,106,60,.65);
+}
+.card:focus-visible > span:last-child svg,
+.card.is-pressed > span:last-child svg {
+  transform: translateX(2px);
+}
+.card.wide:focus-visible,
+.card.wide.is-pressed {
+  background: linear-gradient(135deg, #40332C, #2F2621);
+}
+
+/* ---- Mouse / trackpad only: real hover ---- */
+@media (hover: hover) and (pointer: fine) {
+  .card:hover {
+    transform: translateY(-3px);
+    border-color: #E06A3C;
+    box-shadow: 0 10px 24px -12px rgba(224,106,60,.55), 0 0 0 1px rgba(224,106,60,.25);
+    background-color: #37312E;
+  }
+  .card:hover::before { transform: translateX(120%); }
+  .card:hover > span:first-child {
+    background: rgba(224,106,60,.22);
+    border-color: rgba(224,106,60,.55);
+    box-shadow: 0 0 0 4px rgba(224,106,60,.10);
+    transform: rotate(-6deg) scale(1.06);
+  }
+  .card:hover > span:last-child {
+    background: #E06A3C;
+    border-color: #E06A3C;
+    color: #fff;
+    box-shadow: 0 6px 14px -6px rgba(224,106,60,.65);
+  }
+  .card:hover > span:last-child svg { transform: translateX(2px); }
+  .card.wide:hover { background: linear-gradient(135deg, #40332C, #2F2621); }
+  .card:active { transform: translateY(-1px) scale(.995); }
+}
+
+/* ---- Touch: press feedback + ambient sheen so the cards still feel alive ---- */
+@media (hover: none) {
+  /* snappier in, gentle out — a tap should answer immediately */
+  .card { transition-duration: .12s; }
+  .card.is-pressed {
+    transform: translateY(-2px) scale(.98);
+  }
+  /* the arrow reads as "tap me" without any pointer to reveal it */
+  .card > span:last-child {
+    background: rgba(224,106,60,.14);
+    border-color: rgba(224,106,60,.32);
+    color: #E06A3C;
+  }
+  /* sheen sweeps on its own, staggered down the list */
+  .card::before {
+    transition: none;
+    animation: card-sheen 7s ease-in-out infinite;
+  }
+  .card:nth-child(2)::before { animation-delay: 2.3s; }
+  .card:nth-child(3)::before { animation-delay: 4.6s; }
+  /* while pressed, the sheen is driven by the press instead */
+  .card.is-pressed::before {
+    animation: none;
+    transition: transform .6s ease;
+    transform: translateX(120%);
+  }
+}
+
+@keyframes card-sheen {
+  0%, 60%   { transform: translateX(-120%); }
+  90%, 100% { transform: translateX(120%); }
+}
+
+/* ================= Radial Orbital Timeline ================= */
+.orbital-stage {
+  width: 100%;
+  max-width: 480px;
+  aspect-ratio: 1 / 1;
+  position: relative;
+}
+
+/* Center pulsing planet */
+.orbital-center {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 64px; height: 64px;
+  transform: translate(-50%,-50%);
+  display: grid;
+  place-items: center;
+  z-index: 20;
+}
+.orbital-center-planet {
+  width: 64px; height: 64px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #8b5cf6, #3b82f6, #14b8a6);
+  display: grid;
+  place-items: center;
+  animation: orb-pulse 2.4s cubic-bezier(.4,0,.6,1) infinite;
+  box-shadow: 0 0 24px rgba(59,130,246,.55);
+}
+.orbital-center-inner {
+  width: 30px; height: 30px;
+  border-radius: 9999px;
+  background: rgba(255,255,255,.85);
+  backdrop-filter: blur(4px);
+}
+.orbital-center-ping {
+  position: absolute;
+  width: 80px; height: 80px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255,255,255,.22);
+  animation: orb-ping 2s cubic-bezier(0,0,.2,1) infinite;
+  opacity: .7;
+}
+.orbital-center-ping-2 {
+  width: 96px; height: 96px;
+  border-color: rgba(255,255,255,.12);
+  animation-delay: .6s;
+  opacity: .5;
+}
+
+/* Orbit ring */
+.orbital-track {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 82%;
+  aspect-ratio: 1 / 1;
+  transform: translate(-50%,-50%);
+  border-radius: 9999px;
+  border: 1px solid rgba(255,255,255,.10);
+  pointer-events: none;
+}
+
+/* Node wrapper positioned at center; each .orbital-node is translated */
+.orbital-nodes {
+  position: absolute;
+  inset: 0;
+}
+.orbital-node {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 44px; height: 44px;
+  margin: -22px 0 0 -22px;
+  transition: transform .7s cubic-bezier(.4,0,.2,1), opacity .3s ease;
+  cursor: pointer;
+}
+.orbital-node-dot {
+  position: relative;
+  width: 44px; height: 44px;
+  border-radius: 9999px;
+  display: grid;
+  place-items: center;
+  background: #0b0908;
+  color: #f2f3f5;
+  border: 2px solid rgba(255,255,255,.35);
+  transition: transform .3s ease, background .3s ease, color .3s ease, border-color .3s ease, box-shadow .3s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .orbital-node:hover .orbital-node-dot {
+    border-color: #E06A3C;
+    box-shadow: 0 0 0 4px rgba(224,106,60,.15);
+  }
+}
+.orbital-node.is-active .orbital-node-dot {
+  background: #fff;
+  color: #0b0908;
+  border-color: #fff;
+  transform: scale(1.35);
+  box-shadow: 0 0 24px rgba(255,255,255,.35);
+}
+.orbital-node.is-related .orbital-node-dot {
+  background: rgba(255,255,255,.55);
+  color: #0b0908;
+  border-color: #fff;
+  animation: orb-pulse 1.4s ease-in-out infinite;
+}
+.orbital-node-label {
+  position: absolute;
+  top: 52px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 11px;
+  letter-spacing: .06em;
+  font-weight: 600;
+  color: rgba(255,255,255,.7);
+  transition: color .3s ease, transform .3s ease;
+}
+.orbital-node.is-active .orbital-node-label {
+  color: #fff;
+  transform: translateX(-50%) scale(1.15);
+}
+.orbital-node-halo {
+  position: absolute;
+  inset: -8px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(255,255,255,.18) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity .3s ease;
+  pointer-events: none;
+}
+.orbital-node.is-active .orbital-node-halo,
+.orbital-node.is-related .orbital-node-halo { opacity: 1; }
+
+/* Expanded info card */
+.orbital-card {
+  position: absolute;
+  top: 82px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 220px;
+  background: rgba(11,9,8,.92);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 12px;
+  padding: 12px 14px;
+  z-index: 300;
+  box-shadow: 0 12px 30px -12px rgba(0,0,0,.6);
+  animation: orb-card-in .25s ease;
+}
+.orbital-card::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px; height: 10px;
+  background: rgba(255,255,255,.4);
+}
+.orbital-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+}
+.orbital-card-body {
+  font-size: 12px;
+  color: rgba(255,255,255,.75);
+  line-height: 1.4;
+}
+.orbital-card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: #E06A3C;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background .2s ease, transform .2s ease;
+}
+.orbital-card-cta:hover { background: #f07846; transform: translateY(-1px); }
+
+/* Dim non-active nodes when one is active */
+.orbital-nodes.has-active .orbital-node:not(.is-active):not(.is-related) { opacity: .35; }
+
+@keyframes orb-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: .5; }
+}
+@keyframes orb-ping {
+  0%   { transform: scale(1);   opacity: .7; }
+  75%,
+  100% { transform: scale(1.9); opacity: 0;  }
+}
+@keyframes orb-card-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(-4px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0);    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbital-center-planet, .orbital-center-ping, .orbital-node.is-related .orbital-node-dot { animation: none; }
+  .orbital-node { transition: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card, .card::before, .card [data-lucide] { transition: none; }
+  .card::before { animation: none; }
+  .card:hover, .card:focus-visible, .card.is-pressed { transform: none; }
 }

@@ -11,6 +11,11 @@
 </head>
 <body class="bg-bg text-[#f2f3f5] font-sans">
 
+  <!-- Ambient background glow -->
+  <div class="bg-glow" aria-hidden="true">
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+
   <!-- Scrolling marquee -->
   <div class="overflow-hidden whitespace-nowrap border-b border-border bg-surface py-2.5 text-[13px] tracking-[.08em] uppercase text-muted" aria-hidden="true">
     <div class="marquee-track inline-block">
@@ -27,61 +32,61 @@
         <span class="w-2 h-2 rounded-full bg-green-400"></span>
         <i data-lucide="flame" class="w-3 h-3 text-accent"></i> Fresh Hotpot Daily
       </div>
-      <div class="w-[88px] h-[88px] mx-auto mb-5 rounded-3xl overflow-hidden grid place-items-center">
-        <img src="assets/ANCLEHAI_LOGO_REVERSE.jpg" alt="Ancle Hai logo" class="w-full h-full object-cover" />
+      <div class="logo-halo w-[88px] h-[88px] mx-auto mb-5">
+        <div class="w-full h-full rounded-3xl overflow-hidden grid place-items-center">
+          <img src="assets/ANCLEHAI_LOGO_REVERSE.jpg" alt="Ancle Hai logo" class="w-full h-full object-cover" />
+        </div>
       </div>
       <h1 class="text-[clamp(30px,8vw,40px)] leading-[1.12] font-extrabold tracking-[-.02em]">
         The pot that <em class="not-italic text-accent">brings us together.</em>
       </h1>
-      <p class="mt-3 text-muted text-[15px]">Tap all three — it takes 30 seconds</p>
-    </section>
-
-    <!-- Three numbered steps -->
-    <section class="relative flex justify-center gap-3 mb-8" aria-label="Steps">
-      <div class="absolute left-[15%] right-[15%] top-[13px] h-px bg-border" aria-hidden="true"></div>
-      <div class="flex-1 max-w-[120px] text-center">
-        <span id="step-1" class="relative z-10 inline-grid place-items-center w-[26px] h-[26px] rounded-full border-2 border-accent-2 bg-bg text-accent-2 font-bold text-[13px] mb-1.5 transition-colors duration-300">1</span>
-        <div class="text-sm font-semibold">Follow</div>
-      </div>
-      <div class="flex-1 max-w-[120px] text-center">
-        <span id="step-2" class="relative z-10 inline-grid place-items-center w-[26px] h-[26px] rounded-full border-2 border-accent-2 bg-bg text-accent-2 font-bold text-[13px] mb-1.5 transition-colors duration-300">2</span>
-        <div class="text-sm font-semibold">Join</div>
-      </div>
-      <div class="flex-1 max-w-[120px] text-center">
-        <span id="step-3" class="relative z-10 inline-grid place-items-center w-[26px] h-[26px] rounded-full border-2 border-accent-2 bg-bg text-accent-2 font-bold text-[13px] mb-1.5 transition-colors duration-300">3</span>
-        <div class="text-sm font-semibold">Rate</div>
-      </div>
     </section>
 
     <!-- Link cards -->
     <section class="flex flex-col gap-3">
-      <a class="card flex items-center gap-3.5 bg-surface border border-border rounded-xl2 py-4 px-4.5 no-underline text-[#f2f3f5] transition-all duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+      <a class="card flex items-center gap-3.5 bg-surface border border-border rounded-xl2 py-4 px-6 no-underline text-[#f2f3f5] transition-all duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
          href="https://www.tiktok.com/@anclehaihotpot?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener" data-step="1">
         <span class="w-11 h-11 flex-shrink-0 grid place-items-center"><i data-lucide="music-2" class="w-6 h-6"></i></span>
         <span class="flex-1"><strong class="block text-[15px]">Follow on TikTok</strong><span class="text-[13px] text-muted">@anclehaihotpot</span></span>
         <span class="text-muted"><i data-lucide="arrow-right" class="w-[18px] h-[18px]"></i></span>
       </a>
-      <a class="card flex items-center gap-3.5 bg-surface border border-border rounded-xl2 py-4 px-4.5 no-underline text-[#f2f3f5] transition-all duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+      <a class="card flex items-center gap-3.5 bg-surface border border-border rounded-xl2 py-4 px-6 no-underline text-[#f2f3f5] transition-all duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
          href="https://t.me/Anclehai" target="_blank" rel="noopener" data-step="2">
         <span class="w-11 h-11 flex-shrink-0 grid place-items-center"><i data-lucide="send" class="w-6 h-6"></i></span>
         <span class="flex-1"><strong class="block text-[15px]">Join our Telegram</strong><span class="text-[13px] text-muted">Menu updates &amp; promos</span></span>
         <span class="text-muted"><i data-lucide="arrow-right" class="w-[18px] h-[18px]"></i></span>
       </a>
-      <a class="card flex items-center gap-3.5 bg-surface border border-border rounded-xl2 py-4 px-4.5 no-underline text-[#f2f3f5] transition-all duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+      <a class="card flex items-center gap-3.5 bg-surface border border-border rounded-xl2 py-4 px-6 no-underline text-[#f2f3f5] transition-all duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
          href="https://maps.app.goo.gl/f6J8ktd6fenRegfA9?g_st=ic" target="_blank" rel="noopener" data-step="3">
         <span class="w-11 h-11 flex-shrink-0 grid place-items-center"><i data-lucide="star" class="w-6 h-6"></i></span>
         <span class="flex-1"><strong class="block text-[15px]">Rate us on Google</strong><span class="text-[13px] text-muted">Leave a review</span></span>
         <span class="text-muted"><i data-lucide="arrow-right" class="w-[18px] h-[18px]"></i></span>
       </a>
 
-      <!-- Directions (wide) card -->
-      <a class="card wide flex items-center gap-3.5 border border-border rounded-xl2 py-4 px-4.5 no-underline text-[#f2f3f5] transition-all duration-150 mt-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
-         href="https://maps.app.goo.gl/f6J8ktd6fenRegfA9?g_st=ic" target="_blank" rel="noopener">
-        <span class="w-11 h-11 flex-shrink-0 grid place-items-center text-accent"><i data-lucide="map-pin" class="w-6 h-6"></i></span>
-        <span class="flex-1"><strong class="block text-[15px]">Find us · Get directions</strong><span class="text-[13px] text-muted">Street 183 · Vanda , Phnom Penh</span></span>
-        <span class="text-muted"><i data-lucide="arrow-right" class="w-[18px] h-[18px]"></i></span>
-      </a>
     </section>
+
+    <!-- Radial Orbital Timeline -->
+    <section class="orbital-timeline relative w-full mt-8" aria-label="Find and contact us">
+      <div class="text-center mb-3">
+        <div class="text-[13px] uppercase tracking-[.14em] text-muted">Explore</div>
+        <div class="text-sm text-muted mt-1">Tap a node to see details</div>
+      </div>
+      <div class="orbital-stage relative mx-auto" id="orbital-stage">
+        <!-- Central pulsing core -->
+        <div class="orbital-center">
+          <span class="orbital-center-ping"></span>
+          <span class="orbital-center-ping orbital-center-ping-2"></span>
+          <span class="orbital-center-planet">
+            <span class="orbital-center-inner"></span>
+          </span>
+        </div>
+        <!-- Orbit ring -->
+        <div class="orbital-track" aria-hidden="true"></div>
+        <!-- Nodes injected by JS -->
+        <div class="orbital-nodes" id="orbital-nodes"></div>
+      </div>
+    </section>
+
 
   </main>
 
