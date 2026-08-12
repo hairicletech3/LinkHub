@@ -175,34 +175,48 @@ const orbitalData = [
   }
 })();
 
-// ============ Peek stack: tap to expand ============
-(function initStackCards() {
-  const stack = document.getElementById('stack-cards');
-  if (!stack) return;
+// ============ Background glow parallax ============
+// Nudges the whole aurora layer as you scroll so it reads as depth, not wallpaper.
+(function initGlowParallax() {
+  const glow = document.querySelector('.bg-glow');
+  if (!glow) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  function expand() { stack.classList.remove('is-collapsed'); }
-  function collapse() { stack.classList.add('is-collapsed'); }
+  let ticking = false;
+  function update() {
+    glow.style.setProperty('--glow-shift', `${window.scrollY * -0.08}px`);
+    ticking = false;
+  }
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(update);
+  }, { passive: true });
+  update();
+})();
 
-  // Intercept clicks: first click on any card while collapsed expands the stack
-  stack.addEventListener('click', (e) => {
-    if (stack.classList.contains('is-collapsed')) {
-      e.preventDefault();
-      e.stopPropagation();
-      expand();
-    }
-  }, true);
+// ============ Touch press state for link cards ============
+// :hover never fires on touch and :active is unreliable in mobile Safari,
+// so drive the highlight from pointer events instead.
+(function initCardPress() {
+  const cards = document.querySelectorAll('.card');
+  if (!cards.length) return;
 
-  // Click outside collapses again
-  document.addEventListener('click', (e) => {
-    if (!stack.contains(e.target) && !stack.classList.contains('is-collapsed')) {
-      collapse();
-    }
+  cards.forEach((card) => {
+    const press = () => card.classList.add('is-pressed');
+    // hold the state briefly so the animation is visible before navigation
+    const release = () => setTimeout(() => card.classList.remove('is-pressed'), 180);
+
+    card.addEventListener('pointerdown', press, { passive: true });
+    card.addEventListener('pointerup', release, { passive: true });
+    card.addEventListener('pointercancel', release, { passive: true });
+    card.addEventListener('pointerleave', release, { passive: true });
   });
 
-  // On desktop, collapse when the mouse leaves (matches hover behavior)
-  stack.addEventListener('mouseleave', () => {
-    if (window.matchMedia('(hover: hover)').matches) collapse();
-  });
+  // scrolling over a card shouldn't leave it stuck highlighted
+  window.addEventListener('scroll', () => {
+    cards.forEach((card) => card.classList.remove('is-pressed'));
+  }, { passive: true });
 })();
 
 lucide.createIcons();
