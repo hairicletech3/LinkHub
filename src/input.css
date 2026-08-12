@@ -356,8 +356,14 @@ body { position: relative; }
   top: 50%; left: 50%;
   width: 44px; height: 44px;
   margin: -22px 0 0 -22px;
-  transition: transform .7s cubic-bezier(.4,0,.2,1), opacity .3s ease;
+  /* NO transform transition here: the rotation loop rewrites transform every
+     frame, and a transition would be cancelled + restarted each time. */
+  transition: opacity .3s ease;
   cursor: pointer;
+}
+/* Only while snapping a tapped node to the top does the transform ease. */
+.orbital-nodes.is-snapping .orbital-node {
+  transition: transform .7s cubic-bezier(.4,0,.2,1), opacity .3s ease;
 }
 .orbital-node-dot {
   position: relative;
