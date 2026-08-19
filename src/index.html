@@ -19,10 +19,15 @@
   </div>
 
   <!-- Scrolling marquee -->
-  <div class="overflow-hidden whitespace-nowrap border-b border-border bg-surface py-2.5 text-[13px] tracking-[.08em] uppercase text-muted" aria-hidden="true">
-    <div class="marquee-track inline-block">
-      Fresh Broth Daily <b class="text-accent font-semibold">★</b> Hotpot &amp; BBQ <b class="text-accent font-semibold">★</b> Follow · Join · Rate <b class="text-accent font-semibold">★</b> Ancle Hai <b class="text-accent font-semibold">★</b>&nbsp;
-      Fresh Broth Daily <b class="text-accent font-semibold">★</b> Hotpot &amp; BBQ <b class="text-accent font-semibold">★</b> Follow · Join · Rate <b class="text-accent font-semibold">★</b> Ancle Hai <b class="text-accent font-semibold">★</b>&nbsp;
+  <div class="marquee border-b border-border py-2.5 text-[13px] tracking-[.08em] uppercase text-muted" aria-hidden="true">
+    <!-- one group only; main.js clones it until the loop is seamless at any width -->
+    <div class="marquee-track" id="marquee-track">
+      <span class="marquee-group">
+        Fresh Broth Daily <i data-lucide="flame" class="marquee-mark"></i>
+        Hotpot <i data-lucide="flame" class="marquee-mark"></i>
+        Follow · Join · Rate <i data-lucide="flame" class="marquee-mark"></i>
+        Ancle Hai <i data-lucide="flame" class="marquee-mark"></i>
+      </span>
     </div>
   </div>
 
@@ -30,12 +35,9 @@
 
     <!-- Hero -->
     <section class="text-center mb-9">
-      <div class="inline-flex items-center gap-2 text-[13px] border border-border rounded-full px-3.5 py-1.5 text-muted mb-5">
-        <span class="w-2 h-2 rounded-full bg-green-400"></span>
-        <i data-lucide="flame" class="w-3 h-3 text-accent"></i> Fresh Hotpot Daily
-      </div>
-      <div class="logo-halo w-[88px] h-[88px] mx-auto mb-5">
-        <div class="w-full h-full rounded-3xl overflow-hidden grid place-items-center">
+      <!-- matches the space the old "Fresh Hotpot Daily" badge occupied -->
+      <div class="logo-halo w-[88px] h-[88px] mx-auto mt-[52px] mb-5">
+        <div class="logo-disc w-full h-full rounded-full overflow-hidden grid place-items-center">
           <img src="assets/ANCLEHAI_LOGO_REVERSE.jpg" alt="Ancle Hai logo" class="w-full h-full object-cover" />
         </div>
       </div>
@@ -48,33 +50,87 @@
     <section class="flex flex-col gap-3">
       <a class="card flex items-center gap-3.5 bg-surface border border-border rounded-xl2 py-4 px-6 no-underline text-[#f2f3f5] transition-all duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
          href="https://www.tiktok.com/@anclehaihotpot?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener" data-step="1">
-        <span class="w-11 h-11 flex-shrink-0 grid place-items-center"><i data-lucide="music-2" class="w-6 h-6"></i></span>
-        <span class="flex-1"><strong class="block text-[15px]">Follow on TikTok</strong><span class="text-[13px] text-muted">@anclehaihotpot</span></span>
+        <span class="w-11 h-11 flex-shrink-0 grid place-items-center" data-brand="tiktok"></span>
+        <span class="flex-1"><strong class="block text-[15px]">Follow us</strong><span class="text-[13px] text-muted">@anclehaihotpot</span></span>
         <span class="text-muted"><i data-lucide="arrow-right" class="w-[18px] h-[18px]"></i></span>
       </a>
-      <a class="card flex items-center gap-3.5 bg-surface border border-border rounded-xl2 py-4 px-6 no-underline text-[#f2f3f5] transition-all duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+      <!-- href is set in main.js from CONTACT_URL -->
+      <a id="contact-card"
+         class="card flex items-center gap-3.5 bg-surface border border-border rounded-xl2 py-4 px-6 no-underline text-[#f2f3f5] transition-all duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
          href="https://t.me/Anclehai" target="_blank" rel="noopener" data-step="2">
-        <span class="w-11 h-11 flex-shrink-0 grid place-items-center"><i data-lucide="send" class="w-6 h-6"></i></span>
-        <span class="flex-1"><strong class="block text-[15px]">Join our Telegram</strong><span class="text-[13px] text-muted">Menu updates &amp; promos</span></span>
+        <span class="w-11 h-11 flex-shrink-0 grid place-items-center"><i data-lucide="phone" class="w-6 h-6"></i></span>
+        <span class="flex-1"><strong class="block text-[15px]">Contact us</strong><span class="text-[13px] text-muted" data-contact-sub>Reservations &amp; enquiries</span></span>
         <span class="text-muted"><i data-lucide="arrow-right" class="w-[18px] h-[18px]"></i></span>
       </a>
-      <a class="card flex items-center gap-3.5 bg-surface border border-border rounded-xl2 py-4 px-6 no-underline text-[#f2f3f5] transition-all duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
-         href="https://maps.app.goo.gl/f6J8ktd6fenRegfA9?g_st=ic" target="_blank" rel="noopener" data-step="3">
-        <span class="w-11 h-11 flex-shrink-0 grid place-items-center"><i data-lucide="star" class="w-6 h-6"></i></span>
-        <span class="flex-1"><strong class="block text-[15px]">Rate us on Google</strong><span class="text-[13px] text-muted">Leave a review</span></span>
-        <span class="text-muted"><i data-lucide="arrow-right" class="w-[18px] h-[18px]"></i></span>
-      </a>
+      <!-- ============================================================
+           Rate us on Google — HIDDEN for now.
+           Resolves to one branch via ?b=<id>, otherwise expands a chooser.
+           To bring it back, delete this comment wrapper (the line above and
+           the one below). The CSS and JS are untouched, so it works again the
+           moment the markup returns.
+           ============================================================ -->
+      <!--
+      <div class="branch-group" id="rate-group">
+        <a id="rate-card"
+           class="card flex items-center gap-3.5 bg-surface border border-border rounded-xl2 py-4 px-6 no-underline text-[#f2f3f5] transition-all duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+           href="https://maps.app.goo.gl/f6J8ktd6fenRegfA9?g_st=ic" target="_blank" rel="noopener" data-step="3">
+          <span class="w-11 h-11 flex-shrink-0 grid place-items-center"><i data-lucide="star" class="w-6 h-6"></i></span>
+          <span class="flex-1"><strong class="block text-[15px]">Rate us on Google</strong><span class="text-[13px] text-muted" id="rate-sub">Leave a review</span></span>
+          <span class="text-muted" id="rate-arrow"><i data-lucide="arrow-right" class="w-[18px] h-[18px]"></i></span>
+        </a>
+        <div class="branch-tray" id="rate-tray" hidden>
+          <div class="branch-list" id="rate-branches"></div>
+        </div>
+      </div>
+      -->
+
+      <!-- Directions: branch tabs over a live map preview -->
+      <div class="branch-group" id="dir-group">
+        <a id="dir-card" role="button" tabindex="0" aria-expanded="false" aria-controls="dir-tray"
+           class="card flex items-center gap-3.5 bg-surface border border-border rounded-xl2 py-4 px-6 no-underline text-[#f2f3f5] transition-all duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2">
+          <span class="w-11 h-11 flex-shrink-0 grid place-items-center"><i data-lucide="map-pin" class="w-6 h-6"></i></span>
+          <span class="flex-1"><strong class="block text-[15px]">Get directions</strong><span class="text-[13px] text-muted" id="dir-sub">Rate and view us</span></span>
+          <span class="text-muted" id="dir-arrow"><i data-lucide="chevron-down" class="w-[18px] h-[18px]"></i></span>
+        </a>
+        <div class="branch-tray" id="dir-tray" hidden>
+          <div class="tray-body">
+            <div class="map-tabs" id="dir-tabs" role="tablist" aria-label="Choose a branch"></div>
+            <figure class="shop-frame" id="dir-frame">
+              <div class="shop-media">
+                <!-- src is set on first open so the page never pays for it upfront -->
+                <img id="dir-photo" alt="" loading="lazy" decoding="async" />
+                <span class="shop-hint" id="dir-hint">Add a shopfront photo</span>
+              </div>
+              <figcaption class="shop-address" id="dir-address"></figcaption>
+            </figure>
+            <a class="map-cta" id="dir-open" target="_blank" rel="noopener">
+              <i data-lucide="navigation" style="width:15px;height:15px"></i> Open in Google Maps
+            </a>
+          </div>
+        </div>
+      </div>
 
     </section>
 
-    <!-- Radial Orbital Timeline -->
+    <!-- Secondary socials: compact grid so the page doesn't grow a long list -->
+    <section class="mt-7" id="social-section" aria-label="More ways to find us">
+      <div class="social-divider"><span>Also find us</span></div>
+      <div class="social-grid" id="social-grid"></div>
+    </section>
+
+    <!-- ============================================================
+         Radial Orbital Timeline — HIDDEN for now.
+         To bring it back, delete this comment wrapper (the line above
+         and the one below). The CSS and JS are still in place, so it
+         works again the moment the markup returns.
+         ============================================================ -->
+    <!--
     <section class="orbital-timeline relative w-full mt-8" aria-label="Find and contact us">
       <div class="text-center mb-3">
         <div class="text-[13px] uppercase tracking-[.14em] text-muted">Explore</div>
         <div class="text-sm text-muted mt-1">Tap a node to see details</div>
       </div>
       <div class="orbital-stage relative mx-auto" id="orbital-stage">
-        <!-- Central pulsing core -->
         <div class="orbital-center">
           <span class="orbital-center-ping"></span>
           <span class="orbital-center-ping orbital-center-ping-2"></span>
@@ -82,12 +138,11 @@
             <span class="orbital-center-inner"></span>
           </span>
         </div>
-        <!-- Orbit ring -->
         <div class="orbital-track" aria-hidden="true"></div>
-        <!-- Nodes injected by JS -->
         <div class="orbital-nodes" id="orbital-nodes"></div>
       </div>
     </section>
+    -->
 
 
   </main>

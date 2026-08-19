@@ -116,8 +116,10 @@ body { position: relative; }
   .bg-glow span { animation: none; }
 }
 
-/* ---- Halo behind the hero logo ---- */
+/* ---- Hero logo: round disc, glowing accent ring, soft halo behind ---- */
 .logo-halo { position: relative; }
+
+/* soft bloom behind everything */
 .logo-halo::before {
   content: "";
   position: absolute;
@@ -128,19 +130,80 @@ body { position: relative; }
   filter: blur(22px);
   animation: halo-breathe 5s ease-in-out infinite;
 }
+
+/* the thin accent ring orbiting the disc, with a gap around the logo */
+.logo-halo::after {
+  content: "";
+  position: absolute;
+  inset: -13px;
+  border-radius: 9999px;
+  border: 1.5px solid rgba(224,106,60,.75);
+  box-shadow:
+    0 0 14px rgba(224,106,60,.55),          /* outward glow */
+    inset 0 0 14px rgba(224,106,60,.35);    /* inward glow */
+  pointer-events: none;
+  animation: ring-breathe 5s ease-in-out infinite;
+}
+
+/* the logo itself, rimmed so it reads as a disc against the dark page */
+.logo-disc {
+  box-shadow:
+    0 0 0 1px rgba(224,106,60,.35),
+    0 8px 26px -10px rgba(0,0,0,.8);
+}
+
 @keyframes halo-breathe {
   0%, 100% { opacity: .65; transform: scale(1); }
   50%      { opacity: 1;   transform: scale(1.08); }
 }
+@keyframes ring-breathe {
+  0%, 100% { opacity: .8; transform: scale(1); }
+  50%      { opacity: 1;  transform: scale(1.045); }
+}
 @media (prefers-reduced-motion: reduce) {
-  .logo-halo::before { animation: none; }
+  .logo-halo::before, .logo-halo::after { animation: none; }
 }
 
-/* Custom bits Tailwind utilities can't express cleanly */
-.marquee-track { animation: scroll 22s linear infinite; }
+/* ---- Marquee: translucent, edges masked so it fades instead of hard-cutting ---- */
+.marquee {
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  /* glass, so the aurora behind the page shows through the bar */
+  background: rgba(42,35,32,.55);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  backdrop-filter: blur(10px) saturate(140%);
+  /* fade both ends into the page */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 11%, #000 89%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 11%, #000 89%, transparent);
+}
+.marquee-track {
+  display: inline-flex;
+  align-items: center;
+  will-change: transform;
+  /* duration is set in JS from the measured width, so speed is constant */
+  animation: scroll 22s linear infinite;
+}
+.marquee-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding-right: 10px;
+  flex-shrink: 0;
+}
+.marquee-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 13px;
+  height: 13px;
+  color: #E06A3C;
+  flex-shrink: 0;
+}
+.marquee-mark svg { width: 13px; height: 13px; }
+
 @keyframes scroll {
   from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  to   { transform: translateX(-50%); }
 }
 @media (prefers-reduced-motion: reduce) {
   .marquee-track { animation: none; }
@@ -284,6 +347,426 @@ body { position: relative; }
 @keyframes card-sheen {
   0%, 60%   { transform: translateX(-120%); }
   90%, 100% { transform: translateX(120%); }
+}
+
+/* ================= Secondary socials grid ================= */
+.social-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.social-divider::before,
+.social-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #4E4846, transparent);
+}
+.social-divider span {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: #8E8A89;
+  white-space: nowrap;
+}
+
+/* auto-fit: 4 across on a phone, and it reflows on its own as you add more */
+.social-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+  gap: 10px;
+}
+
+.social-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  /* 44px+ touch target with room to spare */
+  min-height: 76px;
+  padding: 12px 6px;
+  border-radius: 14px;
+  background: rgba(42,35,32,.72);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  backdrop-filter: blur(12px) saturate(140%);
+  border: 1px solid #4E4846;
+  color: #f2f3f5;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform .2s ease, border-color .2s ease, background .2s ease, box-shadow .2s ease, opacity .2s ease;
+}
+.social-tile-mark {
+  display: grid;
+  place-items: center;
+  color: #E06A3C;
+  transition: color .2s ease, transform .2s ease;
+}
+.social-tile-name {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .01em;
+  color: #8E8A89;
+  text-align: center;
+  line-height: 1.1;
+  /* long names shrink rather than breaking the grid */
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color .2s ease;
+}
+
+.social-tile:active {
+  transform: scale(.95);
+  border-color: #E06A3C;
+}
+.social-tile:focus-visible {
+  outline: 2px solid #E06A3C;
+  outline-offset: 2px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .social-tile:hover {
+    transform: translateY(-3px);
+    border-color: #E06A3C;
+    background: rgba(55,49,46,.86);
+    box-shadow: 0 10px 22px -12px rgba(224,106,60,.6);
+  }
+  .social-tile:hover .social-tile-mark { transform: scale(1.12); }
+  .social-tile:hover .social-tile-name { color: #f2f3f5; }
+}
+
+/* Idle look for every tile — faded back with a dashed edge, so the row reads
+   as one soft set. Tiles come forward (full opacity + accent mark) on
+   hover/press; on touch the press state does it. Tune --tile-idle to taste. */
+/* one dial for the faded idle look, shared by the tiles and the maps button */
+:root { --tile-idle: .45; }
+.social-tile {
+  opacity: var(--tile-idle);
+  border-style: dashed;
+}
+.social-tile .social-tile-mark { color: #8E8A89; }
+
+.social-tile:active,
+.social-tile:focus-visible {
+  opacity: 1;
+  border-style: solid;
+}
+.social-tile:active .social-tile-mark,
+.social-tile:focus-visible .social-tile-mark { color: #E06A3C; }
+
+@media (hover: hover) and (pointer: fine) {
+  .social-tile:hover { opacity: 1; border-style: solid; }
+  .social-tile:hover .social-tile-mark { color: #E06A3C; }
+}
+
+/* Placeholder tile: same look, but inert — never a dead link. */
+.social-tile.is-empty { cursor: default; }
+
+@media (prefers-reduced-motion: reduce) {
+  .social-tile, .social-tile-mark, .social-tile-name { transition: none; }
+  .social-tile:hover { transform: none; }
+}
+
+/* ================= Directions map ================= */
+/* single child of .branch-tray — the 0fr -> 1fr row needs something to clip */
+.tray-body {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Tabs then photo drop in one after the other, so the open reads top-to-bottom.
+   The CTA is left out on purpose: it has its own opacity/scale states that a
+   blanket transform rule here would override. */
+.tray-body > .map-tabs,
+.tray-body > .shop-frame {
+  transform: translateY(-12px);
+  transition: transform .3s cubic-bezier(.4,0,.2,1);
+}
+.branch-tray.is-open .tray-body > .map-tabs,
+.branch-tray.is-open .tray-body > .shop-frame {
+  transform: translateY(0);
+}
+.branch-tray.is-open .tray-body > .shop-frame { transition-delay: .07s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tray-body > .map-tabs,
+  .tray-body > .shop-frame { transform: none; transition: none; }
+}
+
+.map-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.map-tab {
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  min-height: 34px;
+  padding: 9px 13px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.10);
+  color: #b8ada8;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background .2s ease, border-color .2s ease, color .2s ease, transform .15s ease;
+}
+.map-tab:active { transform: scale(.94); }
+.map-tab[aria-selected="true"] {
+  background: rgba(224,106,60,.18);
+  border-color: #E06A3C;
+  color: #E06A3C;
+}
+.map-tab:focus-visible { outline: 2px solid #E06A3C; outline-offset: 2px; }
+@media (hover: hover) and (pointer: fine) {
+  .map-tab:hover { border-color: rgba(224,106,60,.55); color: #f2f3f5; }
+  .map-tab[aria-selected="true"]:hover { color: #E06A3C; }
+}
+@media (hover: none) {
+  .map-tab { min-height: 40px; padding: 12px 15px; }
+}
+
+/* Shopfront card. The photos are square and already carry the branch name at
+   the top and opening hours at the bottom, so the frame is 1:1 and the address
+   sits BELOW the image rather than over it — an overlay would cover the hours. */
+.shop-frame { margin: 0; }
+.shop-media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.10);
+  background: #241d1a;
+}
+.shop-media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.shop-address {
+  margin-top: 9px;
+  padding: 0 2px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: #b8ada8;
+}
+
+/* Shown only while a photo is missing or fails to load. */
+.shop-hint {
+  position: absolute;
+  inset: 0;
+  display: none;
+  place-items: center;
+  padding: 0 16px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #8E8A89;
+}
+.shop-frame.is-missing .shop-media { border-style: dashed; }
+.shop-frame.is-missing img { display: none; }
+.shop-frame.is-missing .shop-hint { display: grid; }
+
+/* Styled to match the social tiles: faded dashed glass at rest, coming forward
+   to full opacity + accent on hover/press. */
+.map-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 13px 12px;
+  border-radius: 14px;
+  background: rgba(42,35,32,.72);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  backdrop-filter: blur(12px) saturate(140%);
+  border: 1px dashed #4E4846;
+  color: #8E8A89;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  opacity: var(--tile-idle);
+  -webkit-tap-highlight-color: transparent;
+  transition: background .2s ease, border-color .2s ease, color .2s ease,
+              opacity .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+.map-cta:active,
+.map-cta:focus-visible {
+  opacity: 1;
+  border-style: solid;
+  border-color: #E06A3C;
+  color: #E06A3C;
+  transform: scale(.98);
+}
+.map-cta:focus-visible { outline: 2px solid #E06A3C; outline-offset: 2px; }
+@media (hover: hover) and (pointer: fine) {
+  .map-cta:hover {
+    opacity: 1;
+    border-style: solid;
+    border-color: #E06A3C;
+    color: #E06A3C;
+    background: rgba(55,49,46,.86);
+    box-shadow: 0 10px 22px -12px rgba(224,106,60,.6);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .map-tab, .map-cta { transition: none; }
+}
+
+/* ================= Branch dropdown ================= */
+.branch-group { position: relative; }
+/* card must paint over the tray that is tucked up underneath it */
+.branch-group > .card { z-index: 2; }
+
+/* A drawer tucked under the card, slightly inset, sharing the card's glass so
+   the two read as one component instead of loose tags floating below it. */
+/* Drawer tucked under the card, slightly inset, sharing the card's glass so
+   the two read as one component. Height animates via a grid 0fr -> 1fr, which
+   works with rows of unknown height (max-height hacks do not). */
+.branch-tray {
+  position: relative;
+  margin: -14px 12px 0;
+  padding: 14px 14px 0;
+  border: 1px solid #4E4846;
+  border-top: none;
+  border-radius: 0 0 16px 16px;
+  background: rgba(30,25,22,.55);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  backdrop-filter: blur(12px) saturate(140%);
+
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transform: translateY(-14px);   /* slides down into place */
+  transition: grid-template-rows .28s cubic-bezier(.4,0,.2,1),
+              opacity .22s ease,
+              transform .28s cubic-bezier(.4,0,.2,1),
+              padding .28s cubic-bezier(.4,0,.2,1);
+}
+.branch-tray[hidden] { display: none; }
+.branch-tray.is-open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transform: translateY(0);
+  padding-top: 22px;
+  padding-bottom: 13px;
+}
+.branch-list {
+  overflow: hidden;        /* required for the 0fr -> 1fr row to clip */
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+/* A disclosure card must not run the diagonal sheen — that sweeps left-to-right
+   and fights the downward reveal, reading as "the animation goes sideways". */
+.card[aria-expanded]::before { content: none; }
+
+/* Nor may its chevron slide right: that nudge is meant for "go to this link"
+   arrows, not for an open/close control, which should only rotate. */
+.card[aria-expanded]:hover > span:last-child svg,
+.card[aria-expanded]:focus-visible > span:last-child svg,
+.card[aria-expanded].is-pressed > span:last-child svg {
+  transform: none;
+}
+
+/* Card loses its bottom rounding while open so it fuses with the drawer. */
+.branch-group > .card.is-open {
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+#rate-arrow { transition: transform .28s cubic-bezier(.4,0,.2,1); }
+#rate-arrow.is-open { transform: rotate(180deg); }
+
+.branch-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  color: #f2f3f5;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  /* rows start tucked up; .is-open staggers them down */
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity .25s ease, transform .25s ease, border-color .2s ease, background .2s ease;
+}
+.branch-tray.is-open .branch-item { opacity: 1; transform: translateY(0); }
+.branch-tray.is-open .branch-item:nth-child(2) { transition-delay: .05s; }
+.branch-tray.is-open .branch-item:nth-child(3) { transition-delay: .10s; }
+.branch-tray.is-open .branch-item:nth-child(4) { transition-delay: .15s; }
+
+.branch-item-pin {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  background: rgba(224,106,60,.12);
+  border: 1px solid rgba(224,106,60,.24);
+  color: #E06A3C;
+  transition: background .2s ease, border-color .2s ease;
+}
+.branch-item-text { display: flex; flex-direction: column; flex: 1; min-width: 0; gap: 2px; }
+.branch-item-text strong { font-size: 14px; font-weight: 600; }
+.branch-item-text span {
+  font-size: 12px;
+  color: #8E8A89;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.branch-item > svg:last-child, .branch-item > i:last-child {
+  color: #8E8A89;
+  flex-shrink: 0;
+  transition: color .2s ease, transform .2s ease;
+}
+
+.branch-item:active,
+.branch-item:focus-visible {
+  border-color: rgba(224,106,60,.6);
+  background: rgba(224,106,60,.10);
+}
+.branch-item:focus-visible { outline: 2px solid #E06A3C; outline-offset: 2px; }
+@media (hover: hover) and (pointer: fine) {
+  .branch-item:hover {
+    border-color: rgba(224,106,60,.6);
+    background: rgba(224,106,60,.10);
+  }
+  .branch-item:hover .branch-item-pin {
+    background: rgba(224,106,60,.24);
+    border-color: rgba(224,106,60,.55);
+  }
+  .branch-item:hover > svg:last-child { color: #E06A3C; transform: translate(2px,-2px); }
+}
+/* Touch: taller rows for thumbs */
+@media (hover: none) {
+  .branch-item { padding: 13px 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .branch-tray, .branch-item, #rate-arrow { transition: none; }
+  .branch-tray.is-open .branch-item { transition-delay: 0s; }
+  .branch-item { opacity: 1; transform: none; }
 }
 
 /* ================= Radial Orbital Timeline ================= */
