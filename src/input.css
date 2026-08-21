@@ -349,6 +349,31 @@ body { position: relative; }
   90%, 100% { transform: translateX(120%); }
 }
 
+/* ---- Ambient idle glow: buttons breathe with a soft accent glow at rest,
+   so they read as "alive" without needing a hover. Interaction (hover/focus/
+   press) cancels it so the stronger, static glow above takes over cleanly. ---- */
+.card {
+  animation: ambient-glow 3.6s ease-in-out infinite;
+}
+.card:nth-child(2) { animation-delay: .9s; }
+.card:nth-child(3) { animation-delay: 1.8s; }
+.card:hover,
+.card:focus-visible,
+.card.is-pressed {
+  animation: none;
+}
+
+@keyframes ambient-glow {
+  0%, 100% {
+    border-color: #4E4846;
+    box-shadow: 0 0 0 0 rgba(224,106,60,0);
+  }
+  50% {
+    border-color: rgba(224,106,60,.55);
+    box-shadow: 0 0 16px -2px rgba(224,106,60,.35);
+  }
+}
+
 /* ================= Secondary socials grid ================= */
 .social-divider {
   display: flex;
@@ -419,29 +444,14 @@ body { position: relative; }
   transition: color .2s ease;
 }
 
-.social-tile:active {
-  transform: scale(.95);
-  border-color: #E06A3C;
-}
 .social-tile:focus-visible {
   outline: 2px solid #E06A3C;
   outline-offset: 2px;
 }
-@media (hover: hover) and (pointer: fine) {
-  .social-tile:hover {
-    transform: translateY(-3px);
-    border-color: #E06A3C;
-    background: rgba(55,49,46,.86);
-    box-shadow: 0 10px 22px -12px rgba(224,106,60,.6);
-  }
-  .social-tile:hover .social-tile-mark { transform: scale(1.12); }
-  .social-tile:hover .social-tile-name { color: #f2f3f5; }
-}
 
 /* Idle look for every tile — faded back with a dashed edge, so the row reads
-   as one soft set. Tiles come forward (full opacity + accent mark) on
-   hover/press; on touch the press state does it. Tune --tile-idle to taste. */
-/* one dial for the faded idle look, shared by the tiles and the maps button */
+   as one soft set. Tiles come forward (full opacity, solid edge, lift + glow)
+   on hover/press; on touch the press state does it. Tune --tile-idle to taste. */
 :root { --tile-idle: .45; }
 .social-tile {
   opacity: var(--tile-idle);
@@ -449,24 +459,62 @@ body { position: relative; }
 }
 .social-tile .social-tile-mark { color: #8E8A89; }
 
-.social-tile:active,
-.social-tile:focus-visible {
+/* live tiles breathe a soft accent glow at rest; interaction cancels it so
+   the stronger, static glow below takes over cleanly */
+.social-tile:not(.is-empty) {
+  animation: ambient-glow 3.6s ease-in-out infinite;
+}
+.social-tile:not(.is-empty):nth-child(2) { animation-delay: .9s; }
+.social-tile:not(.is-empty):nth-child(3) { animation-delay: 1.8s; }
+.social-tile:not(.is-empty):nth-child(4) { animation-delay: 2.7s; }
+
+/* ---- Highlight state: shared by keyboard focus and touch press ---- */
+.social-tile:focus-visible,
+.social-tile.is-pressed {
   opacity: 1;
   border-style: solid;
+  border-color: #E06A3C;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px -12px rgba(224,106,60,.55), 0 0 0 1px rgba(224,106,60,.25);
+  background: rgba(55,49,46,.86);
+  animation: none;
 }
-.social-tile:active .social-tile-mark,
-.social-tile:focus-visible .social-tile-mark { color: #E06A3C; }
+.social-tile:focus-visible .social-tile-mark,
+.social-tile.is-pressed .social-tile-mark {
+  color: #E06A3C;
+  transform: scale(1.12);
+}
+.social-tile:focus-visible .social-tile-name,
+.social-tile.is-pressed .social-tile-name {
+  color: #f2f3f5;
+}
 
+/* ---- Mouse / trackpad only: real hover ---- */
 @media (hover: hover) and (pointer: fine) {
-  .social-tile:hover { opacity: 1; border-style: solid; }
-  .social-tile:hover .social-tile-mark { color: #E06A3C; }
+  .social-tile:not(.is-empty):hover {
+    opacity: 1;
+    border-style: solid;
+    border-color: #E06A3C;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px -12px rgba(224,106,60,.55), 0 0 0 1px rgba(224,106,60,.25);
+    background: rgba(55,49,46,.86);
+    animation: none;
+  }
+  .social-tile:not(.is-empty):hover .social-tile-mark {
+    color: #E06A3C;
+    transform: scale(1.12);
+  }
+  .social-tile:not(.is-empty):hover .social-tile-name {
+    color: #f2f3f5;
+  }
+  .social-tile:not(.is-empty):active { transform: translateY(-1px) scale(.985); }
 }
 
 /* Placeholder tile: same look, but inert — never a dead link. */
 .social-tile.is-empty { cursor: default; }
 
 @media (prefers-reduced-motion: reduce) {
-  .social-tile, .social-tile-mark, .social-tile-name { transition: none; }
+  .social-tile, .social-tile-mark, .social-tile-name { transition: none; animation: none; }
   .social-tile:hover { transform: none; }
 }
 
@@ -604,13 +652,17 @@ body { position: relative; }
   transition: background .2s ease, border-color .2s ease, color .2s ease,
               opacity .2s ease, transform .2s ease, box-shadow .2s ease;
 }
+/* breathes a soft accent glow at rest, same as the social tiles */
+.map-cta { animation: ambient-glow 3.6s ease-in-out infinite; }
 .map-cta:active,
 .map-cta:focus-visible {
   opacity: 1;
   border-style: solid;
   border-color: #E06A3C;
   color: #E06A3C;
+  box-shadow: 0 10px 22px -12px rgba(224,106,60,.6);
   transform: scale(.98);
+  animation: none;
 }
 .map-cta:focus-visible { outline: 2px solid #E06A3C; outline-offset: 2px; }
 @media (hover: hover) and (pointer: fine) {
@@ -621,11 +673,12 @@ body { position: relative; }
     color: #E06A3C;
     background: rgba(55,49,46,.86);
     box-shadow: 0 10px 22px -12px rgba(224,106,60,.6);
+    animation: none;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .map-tab, .map-cta { transition: none; }
+  .map-tab, .map-cta { transition: none; animation: none; }
 }
 
 /* ================= Branch dropdown ================= */
@@ -665,6 +718,7 @@ body { position: relative; }
   transform: translateY(0);
   padding-top: 22px;
   padding-bottom: 13px;
+  animation: ambient-glow 3.6s ease-in-out infinite;
 }
 .branch-list {
   overflow: hidden;        /* required for the 0fr -> 1fr row to clip */
@@ -765,6 +819,7 @@ body { position: relative; }
 
 @media (prefers-reduced-motion: reduce) {
   .branch-tray, .branch-item, #rate-arrow { transition: none; }
+  .branch-tray.is-open { animation: none; }
   .branch-tray.is-open .branch-item { transition-delay: 0s; }
   .branch-item { opacity: 1; transform: none; }
 }
@@ -981,6 +1036,6 @@ body { position: relative; }
 }
 @media (prefers-reduced-motion: reduce) {
   .card, .card::before, .card [data-lucide] { transition: none; }
-  .card::before { animation: none; }
+  .card::before, .card { animation: none; }
   .card:hover, .card:focus-visible, .card.is-pressed { transform: none; }
 }

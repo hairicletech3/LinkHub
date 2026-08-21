@@ -54,12 +54,10 @@
         <span class="flex-1"><strong class="block text-[15px]">Follow us</strong><span class="text-[13px] text-muted">@anclehaihotpot</span></span>
         <span class="text-muted"><i data-lucide="arrow-right" class="w-[18px] h-[18px]"></i></span>
       </a>
-      <!-- href is set in main.js from CONTACT_URL -->
-      <a id="contact-card"
-         class="card flex items-center gap-3.5 bg-surface border border-border rounded-xl2 py-4 px-6 no-underline text-[#f2f3f5] transition-all duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+      <a class="card flex items-center gap-3.5 bg-surface border border-border rounded-xl2 py-4 px-6 no-underline text-[#f2f3f5] transition-all duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
          href="https://t.me/Anclehai" target="_blank" rel="noopener" data-step="2">
-        <span class="w-11 h-11 flex-shrink-0 grid place-items-center"><i data-lucide="phone" class="w-6 h-6"></i></span>
-        <span class="flex-1"><strong class="block text-[15px]">Contact us</strong><span class="text-[13px] text-muted" data-contact-sub>Reservations &amp; enquiries</span></span>
+        <span class="w-11 h-11 flex-shrink-0 grid place-items-center" data-brand="telegram"></span>
+        <span class="flex-1"><strong class="block text-[15px]">Join our Channel</strong><span class="text-[13px] text-muted">News, promos & updates</span></span>
         <span class="text-muted"><i data-lucide="arrow-right" class="w-[18px] h-[18px]"></i></span>
       </a>
       <!-- ============================================================
@@ -97,8 +95,9 @@
             <div class="map-tabs" id="dir-tabs" role="tablist" aria-label="Choose a branch"></div>
             <figure class="shop-frame" id="dir-frame">
               <div class="shop-media">
-                <!-- src is set on first open so the page never pays for it upfront -->
-                <img id="dir-photo" alt="" loading="lazy" decoding="async" />
+                <!-- src/srcset are set on first open so the page never pays for it upfront -->
+                <img id="dir-photo" alt="" loading="lazy" decoding="async"
+                     sizes="(max-width: 560px) calc(100vw - 40px), 480px" />
                 <span class="shop-hint" id="dir-hint">Add a shopfront photo</span>
               </div>
               <figcaption class="shop-address" id="dir-address"></figcaption>
