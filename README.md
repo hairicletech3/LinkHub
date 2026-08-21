@@ -1,4 +1,4 @@
-# Ancle Hai Hotpot — Link Tree
+# Ancle Hai Hotpot — LinkHub
 
 A single-page "link in bio" site for **Ancle Hai Hotpot** (Phnom Penh) — the page customers land on from social bios and printed QR codes to follow, join, contact, or find a branch.
 
