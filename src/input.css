@@ -450,11 +450,10 @@ body { position: relative; }
 }
 
 /* Idle look for every tile — faded back with a dashed edge, so the row reads
-   as one soft set. Tiles come forward (full opacity, solid edge, lift + glow)
-   on hover/press; on touch the press state does it. Tune --tile-idle to taste. */
-:root { --tile-idle: .45; }
+   as one soft set. Tiles come forward (solid edge, lift + glow) on hover/press.
+   Muted via color/background alpha rather than element opacity, so the label
+   text stays legible instead of fading along with the card. */
 .social-tile {
-  opacity: var(--tile-idle);
   border-style: dashed;
 }
 .social-tile .social-tile-mark { color: #8E8A89; }
@@ -647,7 +646,6 @@ body { position: relative; }
   font-size: 13px;
   font-weight: 600;
   text-decoration: none;
-  opacity: var(--tile-idle);
   -webkit-tap-highlight-color: transparent;
   transition: background .2s ease, border-color .2s ease, color .2s ease,
               opacity .2s ease, transform .2s ease, box-shadow .2s ease;

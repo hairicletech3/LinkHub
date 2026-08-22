@@ -561,10 +561,6 @@ const orbitalData = [
     if (b.photo) {
       frame.classList.remove('is-missing');
       photo.alt = `${BUSINESS_NAME} — ${b.name} shopfront`;
-      // -640/-960 are pre-resized + sharpened so phones don't have to downscale
-      // the full-size original live (that's what was reading as "low res").
-      const base = b.photo.replace(/\.jpg$/, '');
-      photo.srcset = `${base}-640.jpg 640w, ${base}-960.jpg 960w, ${b.photo} 1280w`;
       photo.src = b.photo;          // an error here flips it back to is-missing
     } else {
       frame.classList.add('is-missing');
