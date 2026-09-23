@@ -1,4 +1,5 @@
 {
   "buildCommand": "npm run build",
-  "outputDirectory": "src"
+  "outputDirectory": "src",
+  "rewrites": [{ "source": "/:branch", "destination": "/index.html" }]
 }

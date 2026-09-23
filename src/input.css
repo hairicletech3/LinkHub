@@ -550,6 +550,9 @@ body { position: relative; }
   flex-wrap: wrap;
   gap: 6px;
 }
+/* Needed explicitly: the UA's [hidden] rule loses to .map-tabs's display:flex,
+   so a branch URL couldn't hide the tab strip without this. */
+.map-tabs[hidden] { display: none; }
 .map-tab {
   font: inherit;
   font-size: 12px;
