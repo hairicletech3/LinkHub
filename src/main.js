@@ -36,11 +36,15 @@ function brandSvg(name, size) {
 // To add one: append a row. To remove one: delete the row. A tile whose url is
 // still REPLACE_WITH_... renders greyed out and is NOT clickable, so it can
 // never be a dead link — fill the url in and it goes live automatically.
+
+// One number for every branch — branches differ by URL, not by phone. Change it
+// here and it updates the Contact tile everywhere.
+const CONTACT_PHONE = '+855070991186';
+
 const SOCIALS = [
   { name: 'Facebook',   icon: 'facebook',  url: 'https://www.facebook.com/anclehaihotpot' },
   { name: 'Instagram',  icon: 'instagram', url: 'https://www.instagram.com/anclehai_hotpot/' },
-  // TODO: replace with a tel: link, e.g. 'tel:+85512345678'
-  { name: 'Contact us', icon: 'phone',     url: 'tel:+855070991186' },
+  { name: 'Contact us', icon: 'phone',     url: `tel:${CONTACT_PHONE}` },
 ];
 
 (function initSocials() {
@@ -85,13 +89,17 @@ const SOCIALS = [
 //   address: the full address shown under the shopfront photo.
 //   photo:   shopfront image in src/assets/. If the file isn't there yet the
 //            frame shows a tidy placeholder instead of a broken image.
+//   id:      ALSO the URL slug — /ifl, /vanda, /tk, /smc each land on this same
+//            page with that branch preselected. Print one QR per branch pointing
+//            at its URL and every table lands on the right branch. Rename an id
+//            only if you're ready to reprint that branch's QR.
 const BRANCHES = [
   {
     id: 'ifl',
     name: 'IFL',
     area: '152 Street 257, Phnom Penh',
     address: '',
-    photo: 'assets/branch1.jpg',
+    photo: '/assets/branch1.jpg',
     coords: '',
     maps: 'https://maps.app.goo.gl/riBSHewq1RBAsgXK9',
     review: 'REPLACE_WITH_REVIEW_LINK',
@@ -101,7 +109,7 @@ const BRANCHES = [
     name: 'Vanda',
     area: 'St 183 · Phnom Penh',
     address: 'Near Vanda, St 183, Institute corner St 475, Phnom Penh 120108',
-    photo: 'assets/branch2.jpg',
+    photo: '/assets/branch2.jpg',
     coords: '',
     maps: 'https://maps.app.goo.gl/f6J8ktd6fenRegfA9?g_st=ic',
     review: 'REPLACE_WITH_REVIEW_LINK',
@@ -110,7 +118,7 @@ const BRANCHES = [
     name: 'TK',
     area: 'St 528 · Phnom Penh',
     address: 'St 528 · Phnom Penh',
-    photo: 'assets/branch3.jpg',
+    photo: '/assets/branch3.jpg',
     coords: '',
     maps: 'https://maps.app.goo.gl/SuDTVFxzgnV1C2MS8',
     review: 'REPLACE_WITH_REVIEW_LINK',
@@ -119,7 +127,7 @@ const BRANCHES = [
     name: 'SMC',
     area: 'Address line',
     address: 'Samdech Monireth Blvd (217), Phnom Penh 535557',
-    photo: 'assets/branch4.jpg',
+    photo: '/assets/branch4.jpg',
     coords: '',
     maps: 'https://maps.app.goo.gl/LWbSH9gmY1xtzSjx9',
     review: 'REPLACE_WITH_REVIEW_LINK'
@@ -156,11 +164,26 @@ function linkFor(branch) {
   return isPlaceholder(url) ? mapsUrl(branch) : url;
 }
 
-// ?b=<id> — print a different QR per branch and the customer never has to choose.
+// Which branch this visitor landed on. Print a different QR per branch and the
+// customer never has to choose.
+//   /tk          <- preferred: one path segment, matching a branch id
+//   /?b=tk       <- still honoured, so QRs printed before the switch keep working
+// An unknown slug returns undefined and the page falls back to the main view, so
+// a typo'd or stale QR is never a dead end.
 function branchFromUrl() {
-  const id = new URLSearchParams(location.search).get('b');
+  const slug = location.pathname.split('/')[1] || '';
+  const id = slug || new URLSearchParams(location.search).get('b') || '';
   return id ? BRANCHES.find((b) => b.id === id.toLowerCase()) : undefined;
 }
+
+// ============ Branch label under the logo ============
+(function initBranchLabel() {
+  const el = document.getElementById('branch-label');
+  const branch = branchFromUrl();
+  if (!el || !branch) return;   // main URL: stays hidden
+  el.textContent = `${branch.name} Branch`;
+  el.hidden = false;
+})();
 
 // ============ Radial Orbital Timeline ============
 // The Directions node follows the same branch as the rest of the page.
@@ -552,7 +575,13 @@ const orbitalData = [
       `<button type="button" class="map-tab" role="tab" data-id="${b.id}" aria-selected="${i === 0}">${b.name}</button>`
   ).join('');
 
-  let current = branchFromUrl() || BRANCHES[0];
+  // On a branch URL the visitor is already standing there — show that one branch
+  // and drop the tab strip. The card itself stays, so the address, photo and map
+  // link still work for anyone they forward the link to.
+  const pinned = branchFromUrl();
+  if (pinned) tabs.hidden = true;
+
+  let current = pinned || BRANCHES[0];
   let loaded = false;
 
   function showPhoto(b) {
@@ -561,10 +590,10 @@ const orbitalData = [
     if (b.photo) {
       frame.classList.remove('is-missing');
       photo.alt = `${BUSINESS_NAME} — ${b.name} shopfront`;
-      // -640/-960 are pre-resized + sharpened so phones don't have to downscale
-      // the full-size original live (that's what was reading as "low res").
-      const base = b.photo.replace(/\.jpg$/, '');
-      photo.srcset = `${base}-640.jpg 640w, ${base}-960.jpg 960w, ${b.photo} 1280w`;
+      // No srcset: the -640/-960 variants it used to list were never generated,
+      // so phones picked a 404 and fell through to the placeholder. Once those
+      // files exist in src/assets/, restore the srcset line.
+      photo.removeAttribute('srcset');
       photo.src = b.photo;          // an error here flips it back to is-missing
     } else {
       frame.classList.add('is-missing');
