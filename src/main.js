@@ -132,13 +132,17 @@ function initSocials() {
 //   phones:  up to 2 numbers, written the way you'd dial locally, e.g.
 //            '070 991 186'. Leave as '' if the branch has no number — the
 //            Call card then falls back to MAIN_PHONE.
+//   id:      ALSO the URL slug — /ifl, /vanda, /tk, /smc each land on this same
+//            page with that branch preselected. Print one QR per branch pointing
+//            at its URL and every table lands on the right branch. Rename an id
+//            only if you're ready to reprint that branch's QR.
 const BRANCHES = [
   {
     id: 'ifl',
     name: 'IFL',
     area: '152 Street 257, Phnom Penh',
     address: '',
-    photo: 'assets/branch1.jpg',
+    photo: '/assets/branch1.jpg',
     coords: '',
     phones: ['078 991 186', '070 991 186'],
     maps: 'https://maps.app.goo.gl/riBSHewq1RBAsgXK9',
@@ -149,7 +153,7 @@ const BRANCHES = [
     name: 'Vanda',
     area: 'St 183 · Phnom Penh',
     address: 'Near Vanda, St 183, Institute corner St 475, Phnom Penh 120108',
-    photo: 'assets/branch2.jpg',
+    photo: '/assets/branch2.jpg',
     coords: '',
     phones: ['078 711 866', '087 711 866'],
     maps: 'https://maps.app.goo.gl/f6J8ktd6fenRegfA9?g_st=ic',
@@ -159,7 +163,7 @@ const BRANCHES = [
     name: 'TK',
     area: 'St 528 · Phnom Penh',
     address: 'St 528 · Phnom Penh',
-    photo: 'assets/branch3.jpg',
+    photo: '/assets/branch3.jpg',
     coords: '',
     phones: ['070 288 586', '061 288 586'],
     maps: 'https://maps.app.goo.gl/SuDTVFxzgnV1C2MS8',
@@ -169,7 +173,7 @@ const BRANCHES = [
     name: 'SMC',
     area: 'Address line',
     address: 'Samdech Monireth Blvd (217), Phnom Penh 535557',
-    photo: 'assets/branch4.jpg',
+    photo: '/assets/branch4.jpg',
     coords: '',
     phones: ['070 575 586', '078 575 586'],
     maps: 'https://maps.app.goo.gl/LWbSH9gmY1xtzSjx9',
@@ -223,15 +227,26 @@ function linkFor(branch) {
   return isPlaceholder(url) ? mapsUrl(branch) : url;
 }
 
-// Each branch has its own URL — /ifl, /vanda, /tk, /smc (rewritten to
-// index.html in vercel.json) — so a per-branch QR never makes the customer
-// choose. The old ?b=<id> form still works for QR codes already printed.
-// Plain / is the main page and shows all branches.
+// Which branch this visitor landed on. Print a different QR per branch and the
+// customer never has to choose.
+//   /tk          <- preferred: one path segment, matching a branch id
+//   /?b=tk       <- still honoured, so QRs printed before the switch keep working
+// An unknown slug returns undefined and the page falls back to the main view, so
+// a typo'd or stale QR is never a dead end.
 function branchFromUrl() {
-  const id = location.pathname.split('/').filter(Boolean)[0]
-    || new URLSearchParams(location.search).get('b');
+  const slug = location.pathname.split('/')[1] || '';
+  const id = slug || new URLSearchParams(location.search).get('b') || '';
   return id ? BRANCHES.find((b) => b.id === id.toLowerCase()) : undefined;
 }
+
+// ============ Branch label under the logo ============
+(function initBranchLabel() {
+  const el = document.getElementById('branch-label');
+  const branch = branchFromUrl();
+  if (!el || !branch) return;   // main URL: stays hidden
+  el.textContent = `${branch.name} Branch`;
+  el.hidden = false;
+})();
 
 // ============ Radial Orbital Timeline ============
 // On a branch URL the nodes follow that branch; on the main page they cover all.

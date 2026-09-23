@@ -562,6 +562,9 @@ button.social-tile[aria-expanded="true"] { border-color: #E06A3C; }
   flex-wrap: wrap;
   gap: 6px;
 }
+/* Needed explicitly: the UA's [hidden] rule loses to .map-tabs's display:flex,
+   so a branch URL couldn't hide the tab strip without this. */
+.map-tabs[hidden] { display: none; }
 .map-tab {
   font: inherit;
   font-size: 12px;
@@ -721,8 +724,7 @@ button.social-tile[aria-expanded="true"] { border-color: #E06A3C; }
               transform .28s cubic-bezier(.4,0,.2,1),
               padding .28s cubic-bezier(.4,0,.2,1);
 }
-.branch-tray[hidden],
-.map-tabs[hidden] { display: none; }
+.branch-tray[hidden] { display: none; }
 .branch-tray.is-open {
   grid-template-rows: 1fr;
   opacity: 1;

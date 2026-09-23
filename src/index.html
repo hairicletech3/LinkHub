@@ -4,9 +4,11 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="theme-color" content="#1C1512" />
-<link rel="icon" href="assets/ANCLEHAI_LOGO_REVERSE.jpg" />
+<link rel="icon" href="/assets/ANCLEHAI_LOGO_REVERSE.jpg" />
 <title>Ancle Hai · Follow, Join &amp; Rate</title>
-<link rel="stylesheet" href="output.css" />
+<!-- Root-relative, not relative: this same file is served at /, /ifl, /tk, ...
+     so "output.css" would resolve differently per branch URL. -->
+<link rel="stylesheet" href="/output.css" />
 <link rel="preconnect" href="https://unpkg.com" crossorigin />
 <!-- pinned (not @latest: that redirect is only cached 60s) and deferred so it never blocks first paint -->
 <script defer src="https://unpkg.com/lucide@1.31.0/dist/umd/lucide.js"></script>
@@ -38,9 +40,13 @@
       <!-- matches the space the old "Fresh Hotpot Daily" badge occupied -->
       <div class="logo-halo w-[88px] h-[88px] mx-auto mt-[52px] mb-5">
         <div class="logo-disc w-full h-full rounded-full overflow-hidden grid place-items-center">
-          <img src="assets/ANCLEHAI_LOGO_REVERSE.jpg" alt="Ancle Hai logo" class="w-full h-full object-cover" />
+          <img src="/assets/ANCLEHAI_LOGO_REVERSE.jpg" alt="Ancle Hai logo" class="w-full h-full object-cover" />
         </div>
       </div>
+      <!-- Shown only on a branch URL (/ifl, /tk, ...). main.js fills the text and
+           unhides it; on the main URL it stays hidden. Classes must live here —
+           tailwind only scans .html, so classes added from JS never get built. -->
+      <p id="branch-label" class="text-[12px] uppercase tracking-[.16em] font-semibold text-accent mb-3" hidden></p>
       <h1 class="text-[clamp(30px,8vw,40px)] leading-[1.12] font-extrabold tracking-[-.02em]">
         The pot that <em class="not-italic text-accent">brings us together.</em>
       </h1>
@@ -149,7 +155,7 @@
   <footer class="text-center text-muted text-[13px] py-6 pb-3">Ancle Hai Hotpot · Phnom Penh</footer>
 
   <!-- deferred too: defer preserves document order, so lucide is ready before this runs -->
-  <script defer src="main.js"></script>
+  <script defer src="/main.js"></script>
 
 </body>
 </html>
