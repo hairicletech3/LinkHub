@@ -590,10 +590,6 @@ const orbitalData = [
     if (b.photo) {
       frame.classList.remove('is-missing');
       photo.alt = `${BUSINESS_NAME} — ${b.name} shopfront`;
-      // No srcset: the -640/-960 variants it used to list were never generated,
-      // so phones picked a 404 and fell through to the placeholder. Once those
-      // files exist in src/assets/, restore the srcset line.
-      photo.removeAttribute('srcset');
       photo.src = b.photo;          // an error here flips it back to is-missing
     } else {
       frame.classList.add('is-missing');
