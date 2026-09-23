@@ -423,6 +423,18 @@ body { position: relative; }
   -webkit-tap-highlight-color: transparent;
   transition: transform .2s ease, border-color .2s ease, background .2s ease, box-shadow .2s ease, opacity .2s ease;
 }
+/* The Call tile is a <button> when it opens the number picker */
+button.social-tile { font: inherit; cursor: pointer; }
+button.social-tile[aria-expanded="true"] { border-color: #E06A3C; }
+
+/* Number picker under the social grid. Unlike the card trays it isn't
+   tucked under anything, so it gets its own top edge and rounded corners. */
+.branch-tray.call-tray {
+  margin: 10px 0 0;
+  border-top: 1px solid #4E4846;
+  border-radius: 16px;
+}
+.branch-tray.call-tray.is-open { padding-top: 13px; }
 .social-tile-mark {
   display: grid;
   place-items: center;
@@ -709,7 +721,8 @@ body { position: relative; }
               transform .28s cubic-bezier(.4,0,.2,1),
               padding .28s cubic-bezier(.4,0,.2,1);
 }
-.branch-tray[hidden] { display: none; }
+.branch-tray[hidden],
+.map-tabs[hidden] { display: none; }
 .branch-tray.is-open {
   grid-template-rows: 1fr;
   opacity: 1;

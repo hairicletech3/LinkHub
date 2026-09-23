@@ -1,4 +1,8 @@
 {
   "buildCommand": "npm run build",
-  "outputDirectory": "src"
+  "outputDirectory": "src",
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/:branch(ifl|vanda|tk|smc)", "destination": "/index.html" }
+  ]
 }

@@ -39,11 +39,12 @@ function brandSvg(name, size) {
 const SOCIALS = [
   { name: 'Facebook',   icon: 'facebook',  url: 'https://www.facebook.com/anclehaihotpot' },
   { name: 'Instagram',  icon: 'instagram', url: 'https://www.instagram.com/anclehai_hotpot/' },
-  // TODO: replace with a tel: link, e.g. 'tel:+85512345678'
-  { name: 'Contact us', icon: 'phone',     url: 'tel:+855070991186' },
+  // Filled in by initSocials(): the branch's own number on /ifl etc., else MAIN_PHONE.
+  { name: 'Contact us', icon: 'phone',     url: 'PHONE' },
 ];
 
-(function initSocials() {
+// Called further down, once BRANCHES / HOME_BRANCH exist.
+function initSocials() {
   const grid = document.getElementById('social-grid');
   const section = document.getElementById('social-section');
   if (!grid || !section) return;
@@ -53,21 +54,64 @@ const SOCIALS = [
     return;
   }
 
+  // The PHONE row is one tile. A tel: link can only dial one number, so when
+  // the branch has 2 the tile opens a small picker instead of dialling.
+  // Main page: MAIN_PHONE, dialled directly.
+  const numbers = HOME_BRANCH ? phonesFor(HOME_BRANCH) : [MAIN_PHONE];
+
   grid.innerHTML = SOCIALS.map((s) => {
     const mark = brandSvg(s.icon, 22);
-    const live = !isPlaceholder(s.url);
+    const inner = `<span class="social-tile-mark">${mark}</span>
+           <span class="social-tile-name">${s.name}</span>`;
+    if (s.url === 'PHONE') {
+      return numbers.length > 1
+        ? `<button type="button" class="social-tile" id="call-tile" aria-expanded="false" aria-controls="call-tray">${inner}</button>`
+        : `<a class="social-tile" href="${telHref(numbers[0])}" aria-label="${s.name}">${inner}</a>`;
+    }
     // Unset links render as an inert span rather than an <a> to nowhere.
-    return live
-      ? `<a class="social-tile" href="${s.url}" target="_blank" rel="noopener" aria-label="${s.name}">
-           <span class="social-tile-mark">${mark}</span>
-           <span class="social-tile-name">${s.name}</span>
-         </a>`
-      : `<span class="social-tile is-empty" aria-disabled="true" title="Add a link for ${s.name} in SOCIALS">
-           <span class="social-tile-mark">${mark}</span>
-           <span class="social-tile-name">${s.name}</span>
-         </span>`;
+    return !isPlaceholder(s.url)
+      ? `<a class="social-tile" href="${s.url}" target="_blank" rel="noopener" aria-label="${s.name}">${inner}</a>`
+      : `<span class="social-tile is-empty" aria-disabled="true" title="Add a link for ${s.name} in SOCIALS">${inner}</span>`;
   }).join('');
-})();
+
+  const tile = document.getElementById('call-tile');
+  if (!tile) return;
+
+  // Same disclosure tray as the branch pickers, one row per number.
+  const tray = document.createElement('div');
+  tray.className = 'branch-tray call-tray';
+  tray.id = 'call-tray';
+  tray.hidden = true;
+  tray.innerHTML = `<div class="branch-list">${numbers
+    .map(
+      (p) => `
+      <a class="branch-item" href="${telHref(p)}">
+        <span class="branch-item-pin"><i data-lucide="phone" style="width:15px;height:15px"></i></span>
+        <span class="branch-item-text">
+          <strong>${p}</strong>
+          <span>Call ${HOME_BRANCH.name}</span>
+        </span>
+        <i data-lucide="arrow-up-right" style="width:16px;height:16px"></i>
+      </a>`
+    )
+    .join('')}</div>`;
+  grid.after(tray);
+
+  let closeTimer = null;
+  tile.addEventListener('click', () => {
+    const open = tile.getAttribute('aria-expanded') === 'true';
+    tile.setAttribute('aria-expanded', String(!open));
+    clearTimeout(closeTimer);
+    if (open) {
+      tray.classList.remove('is-open');
+      closeTimer = setTimeout(() => { tray.hidden = true; }, 260);
+    } else {
+      tray.hidden = false;
+      void tray.offsetHeight;   // force layout so the transition actually runs
+      tray.classList.add('is-open');
+    }
+  });
+}
 
 // ============ Branches ============
 // TODO: fill in the 3 remaining branches.
@@ -85,6 +129,9 @@ const SOCIALS = [
 //   address: the full address shown under the shopfront photo.
 //   photo:   shopfront image in src/assets/. If the file isn't there yet the
 //            frame shows a tidy placeholder instead of a broken image.
+//   phones:  up to 2 numbers, written the way you'd dial locally, e.g.
+//            '070 991 186'. Leave as '' if the branch has no number — the
+//            Call card then falls back to MAIN_PHONE.
 const BRANCHES = [
   {
     id: 'ifl',
@@ -93,6 +140,7 @@ const BRANCHES = [
     address: '',
     photo: 'assets/branch1.jpg',
     coords: '',
+    phones: ['078 991 186', '070 991 186'],
     maps: 'https://maps.app.goo.gl/riBSHewq1RBAsgXK9',
     review: 'REPLACE_WITH_REVIEW_LINK',
   },
@@ -103,6 +151,7 @@ const BRANCHES = [
     address: 'Near Vanda, St 183, Institute corner St 475, Phnom Penh 120108',
     photo: 'assets/branch2.jpg',
     coords: '',
+    phones: ['078 711 866', '087 711 866'],
     maps: 'https://maps.app.goo.gl/f6J8ktd6fenRegfA9?g_st=ic',
     review: 'REPLACE_WITH_REVIEW_LINK',
   },
@@ -112,6 +161,7 @@ const BRANCHES = [
     address: 'St 528 · Phnom Penh',
     photo: 'assets/branch3.jpg',
     coords: '',
+    phones: ['070 288 586', '061 288 586'],
     maps: 'https://maps.app.goo.gl/SuDTVFxzgnV1C2MS8',
     review: 'REPLACE_WITH_REVIEW_LINK',
   },
@@ -121,12 +171,29 @@ const BRANCHES = [
     address: 'Samdech Monireth Blvd (217), Phnom Penh 535557',
     photo: 'assets/branch4.jpg',
     coords: '',
+    phones: ['070 575 586', '078 575 586'],
     maps: 'https://maps.app.goo.gl/LWbSH9gmY1xtzSjx9',
     review: 'REPLACE_WITH_REVIEW_LINK'
   },
 ];
 
 const BUSINESS_NAME = 'Ancle Hai Hotpot';
+
+// Used by the Call card when the current branch has no number of its own.
+const MAIN_PHONE = '070 991 186';
+
+// '070 991 186' -> 'tel:+85570991186'. The local leading 0 must be dropped
+// once the +855 country code is in front, or some phones won't dial it.
+function telHref(num) {
+  const digits = num.replace(/\D/g, '');
+  return digits.startsWith('855') ? `tel:+${digits}` : `tel:+855${digits.replace(/^0/, '')}`;
+}
+
+// The branch's filled-in numbers, or the main number if it has none.
+function phonesFor(branch) {
+  const list = (branch.phones || []).filter((p) => p && p.trim());
+  return list.length ? list : [MAIN_PHONE];
+}
 
 // Function declaration, not const: it is hoisted, so code earlier in the file
 // (the socials grid) can call it too.
@@ -156,24 +223,30 @@ function linkFor(branch) {
   return isPlaceholder(url) ? mapsUrl(branch) : url;
 }
 
-// ?b=<id> — print a different QR per branch and the customer never has to choose.
+// Each branch has its own URL — /ifl, /vanda, /tk, /smc (rewritten to
+// index.html in vercel.json) — so a per-branch QR never makes the customer
+// choose. The old ?b=<id> form still works for QR codes already printed.
+// Plain / is the main page and shows all branches.
 function branchFromUrl() {
-  const id = new URLSearchParams(location.search).get('b');
+  const id = location.pathname.split('/').filter(Boolean)[0]
+    || new URLSearchParams(location.search).get('b');
   return id ? BRANCHES.find((b) => b.id === id.toLowerCase()) : undefined;
 }
 
 // ============ Radial Orbital Timeline ============
-// The Directions node follows the same branch as the rest of the page.
-const HOME_BRANCH = branchFromUrl() || BRANCHES[0];
+// On a branch URL the nodes follow that branch; on the main page they cover all.
+const HOME_BRANCH = branchFromUrl();
+
+initSocials();
 
 const orbitalData = [
   {
     id: 1,
     title: 'Directions',
     icon: 'map-pin',
-    info: `${HOME_BRANCH.name} · ${HOME_BRANCH.area}`,
-    href: mapsUrl(HOME_BRANCH),
-    cta: 'Open in Maps',
+    ...(HOME_BRANCH
+      ? { info: `${HOME_BRANCH.name} · ${HOME_BRANCH.area}`, href: mapsUrl(HOME_BRANCH), cta: 'Open in Maps' }
+      : { info: `${BRANCHES.length} branches in Phnom Penh · ${BRANCHES.map((b) => b.name).join(' · ')}` }),
     relatedIds: [2, 3],
   },
   {
@@ -187,9 +260,19 @@ const orbitalData = [
     id: 3,
     title: 'Call',
     icon: 'phone',
-    info: 'Tap to call for reservations',
-    href: 'tel:+855000000000',
-    cta: 'Call now',
+    // Branch page: both of its numbers. Main page: one number per branch.
+    ...(HOME_BRANCH
+      ? {
+          info: `Tap to call ${HOME_BRANCH.name} for reservations`,
+          links: phonesFor(HOME_BRANCH).map((p) => ({ href: telHref(p), cta: `Call ${p}` })),
+        }
+      : {
+          info: 'Tap to call a branch for reservations',
+          links: BRANCHES.map((b) => {
+            const p = phonesFor(b)[0];
+            return { href: telHref(p), cta: `${b.name} · ${p}` };
+          }),
+        }),
     relatedIds: [1, 4],
   },
   {
@@ -288,10 +371,12 @@ const orbitalData = [
     if (!item || !node) return;
     const card = document.createElement('div');
     card.className = 'orbital-card';
+    // A node has either a single href/cta or a list of links (e.g. 2 phone numbers).
+    const links = item.links || (item.href ? [{ href: item.href, cta: item.cta }] : []);
     card.innerHTML = `
       <div class="orbital-card-title">${item.title}</div>
       <div class="orbital-card-body">${item.info}</div>
-      ${item.href ? `<a class="orbital-card-cta" href="${item.href}" target="_blank" rel="noopener">${item.cta} <i data-lucide="arrow-right" style="width:14px;height:14px"></i></a>` : ''}
+      ${links.map((l) => `<a class="orbital-card-cta" href="${l.href}" target="_blank" rel="noopener">${l.cta} <i data-lucide="arrow-right" style="width:14px;height:14px"></i></a>`).join(' ')}
     `;
     card.addEventListener('click', (e) => e.stopPropagation());
     node.appendChild(card);
@@ -547,12 +632,16 @@ const orbitalData = [
   // A missing or unset photo shows the placeholder rather than a broken image.
   photo.addEventListener('error', () => frame.classList.add('is-missing'));
 
-  tabs.innerHTML = BRANCHES.map(
+  // Branch URL (/ifl …): only that branch, no tabs to choose from.
+  // Main page: a tab per branch.
+  const shown = HOME_BRANCH ? [HOME_BRANCH] : BRANCHES;
+  tabs.hidden = shown.length < 2;
+  tabs.innerHTML = shown.map(
     (b, i) =>
       `<button type="button" class="map-tab" role="tab" data-id="${b.id}" aria-selected="${i === 0}">${b.name}</button>`
   ).join('');
 
-  let current = branchFromUrl() || BRANCHES[0];
+  let current = shown[0];
   let loaded = false;
 
   function showPhoto(b) {
